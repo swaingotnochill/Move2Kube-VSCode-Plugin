@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import * as child_process from "child_process";
 import { getLatestVersionFromGithub } from "./checkCLI";
 import { getTerminalForDesktopCommands, selectFolder, showTimedInformationMessage } from "./utils";
+import path = require("path");
 
 let outputChannel: vscode.OutputChannel;
 
@@ -71,8 +72,13 @@ export async function createTransform(uri: vscode.Uri | undefined) {
       uri?.fsPath ||
       (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0].uri.fsPath) ||
       process.cwd();
-
     terminal.show();
+    terminal.sendText(`cd .. && mkdir outputFolder && cd outputFolder`);
+    const { workspaceFolders } = vscode.workspace;
+    vscode.workspace.updateWorkspaceFolders(workspaceFolders ? workspaceFolders.length : 0, 0, {
+      name: "outputFolder",
+      uri: vscode.Uri.file(path.join(cwd, "..", "outputFolder")),
+    });
     terminal.sendText(`move2kube transform -s ${cwd}`);
   } catch (err) {
     vscode.window.showErrorMessage(`Failed to run transform.\n [ERROR] : ${err}`);

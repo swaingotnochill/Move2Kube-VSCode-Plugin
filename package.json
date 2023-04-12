@@ -4,7 +4,7 @@
   "description": "A VSCode extension for the Move2Kube application.",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.46.0"
+    "vscode": "^1.76.0"
   },
   "categories": [
     "Other"
