@@ -1,10 +1,9 @@
 import path = require("path");
 import fs = require("fs");
 
-import { title } from "process";
 import * as vscode from "vscode";
 import * as os from "os";
-import { pluginOutput } from "./constants";
+import { defaultProjectName, pluginOutput } from "./constants";
 
 let outputChannel: vscode.OutputChannel;
 
@@ -37,6 +36,7 @@ export async function selectFolder(title: string | ""): Promise<string | undefin
   return undefined;
 }
 
+// Maybe remove this.
 export function showTimedInformationMessage(message: string, duration: number): void {
   const closeMessageItem: vscode.MessageItem = { title: "Close" };
   const promise = vscode.window.showInformationMessage(message, closeMessageItem);
@@ -111,6 +111,15 @@ export async function getUserConfigOption(): Promise<string[]> {
   return args;
 }
 
+export async function getProjectName(): Promise<string> {
+  const userInput = await vscode.window.showInputBox({
+    value: defaultProjectName,
+    prompt: `Specify the project name. (or press Enter for ${defaultProjectName})`,
+  });
+
+  return userInput ? userInput : defaultProjectName;
+}
+
 export async function showOutputFolderInWorkspace(path: string) {
   const yes = "Yes";
   const no = "No";
@@ -166,4 +175,28 @@ export function changeOutputLocation(terminal: vscode.Terminal, cwd: string): st
   }
   terminal.sendText(`${cdCommand}`);
   return outputFolder;
+}
+
+export function showTimedStatusBarItem(
+  message: string,
+  timeout: number = 10000,
+  steps: number = 15
+) {
+  const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+  statusBarItem.text = message;
+  statusBarItem.color = "#ffffff";
+  statusBarItem.show();
+
+  let opacity = 1.0;
+  let step = 0;
+
+  const fadeOut = setInterval(() => {
+    opacity = 1.0 - step / steps;
+    statusBarItem.color = `rgba(255, 255, 255, ${opacity})`;
+    step++;
+    if (step >= steps) {
+      clearInterval(fadeOut);
+      statusBarItem.hide();
+    }
+  }, timeout / steps);
 }

@@ -4,14 +4,23 @@
   "description": "A VSCode extension for the Move2Kube application.",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.46.0"
+    "vscode": "^1.76.0"
   },
+  "publisher": "ChasingClouds",
   "categories": [
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/swaingotnochill/move2kube-vscode-plugin"
+  },
+  "preview": true,
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
+    "workbench.colorCustomizations": {
+      "statusBar.background": "#008784"
+    },
     "commands": [
       {
         "command": "m2k.showHelloWorld",
@@ -24,6 +33,10 @@
       {
         "command": "m2k.customizationTransform",
         "title": "Move2Kube: Transform + Customizations"
+      },
+      {
+        "command": "m2k.transformAllOptions",
+        "title": "Move2Kube: Transform + All Options"
       },
       {
         "command": "m2k.plan",
@@ -50,6 +63,11 @@
           "when": "explorerResourceIsFolder",
           "command": "m2k.customizationTransform",
           "group": "move2kube@3"
+        },
+        {
+          "when": "explorerResourceIsFolder",
+          "command": "m2k.transformAllOptions",
+          "group": "move2kube@4"
         }
       ]
     }

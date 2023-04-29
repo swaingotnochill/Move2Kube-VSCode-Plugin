@@ -6,6 +6,7 @@ import {
   createCustomizationTransform,
   createTransform,
   makePlan,
+  transformAllOptions,
 } from "./utilities/getHandlers";
 
 import { setOutputChannelForDesktopCommands } from "./utilities/utils";
@@ -46,10 +47,16 @@ export async function activate(context: vscode.ExtensionContext) {
     createCustomizationTransform
   );
 
+  // `transform` command with all options.
+  const allOptionsTransformCommand = vscode.commands.registerCommand(
+    "m2k.transformAllOptions",
+    transformAllOptions
+  );
   // Add command to the extension context
   context.subscriptions.push(showHelloWorldCommand);
   context.subscriptions.push(transformCommand);
   context.subscriptions.push(customizationTransformCommand);
+  context.subscriptions.push(allOptionsTransformCommand);
   context.subscriptions.push(planCommand);
   context.subscriptions.push(checkForUpdatesCommand);
 }
