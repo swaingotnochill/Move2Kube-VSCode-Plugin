@@ -176,6 +176,31 @@ export function changeOutputLocation(terminal: vscode.Terminal, cwd: string): st
   terminal.sendText(`${cdCommand}`);
   return outputFolder;
 }
+export async function copyDirectory(sourceUri: vscode.Uri, destUri: vscode.Uri): Promise<void> {
+  try {
+    await vscode.workspace.fs.copy(sourceUri, destUri, { overwrite: true });
+  } catch (error) {
+    if (error instanceof vscode.FileSystemError) {
+      if (error.code === "FileNotFound") {
+        vscode.window.showErrorMessage(
+          `Failed to copy '${sourceUri.path}' to '${destUri.path}': Source not found.`
+        );
+      } else if (error.code === "PermissionDenied") {
+        vscode.window.showErrorMessage(
+          `Failed to copy '${sourceUri.path}' to '${destUri.path}': Permission denied.`
+        );
+      } else {
+        vscode.window.showErrorMessage(
+          `Failed to copy '${sourceUri.path}' to '${destUri.path}': ${error.message}`
+        );
+      }
+    } else {
+      vscode.window.showErrorMessage(
+        `Failed to copy '${sourceUri.path}' to '${destUri.path}': ${(<Error>error).message}`
+      );
+    }
+  }
+}
 
 export function showTimedStatusBarItem(
   message: string,
@@ -199,4 +224,25 @@ export function showTimedStatusBarItem(
       statusBarItem.hide();
     }
   }, timeout / steps);
+}
+
+export async function addHelmChart(path: string): Promise<string | undefined> {
+  const yes = "Yes";
+  const no = "No";
+  const userChoice = await vscode.window.showQuickPick([yes, no], {
+    placeHolder: "Do you wish to add the helm chart folder to project?",
+  });
+  switch (userChoice) {
+    case yes:
+      return path;
+    default:
+      return undefined;
+  }
+}
+
+export async function createTempDir(): Promise<vscode.Uri | undefined> {
+  const tempDirName = `m2k-temp-dir-${Date.now()}`;
+  const tempDirUri = vscode.Uri.file(path.join(os.tmpdir(), tempDirName));
+  await vscode.workspace.fs.createDirectory(tempDirUri);
+  return tempDirUri;
 }

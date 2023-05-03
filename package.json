@@ -45,6 +45,10 @@
       {
         "command": "m2k.checkForUpdates",
         "title": "Move2Kube: Check For Updates"
+      },
+      {
+        "command": "m2k.addHelmChart",
+        "title": "Move2Kube: Add helm chart"
       }
     ],
     "menus": {
@@ -66,8 +70,13 @@
         },
         {
           "when": "explorerResourceIsFolder",
-          "command": "m2k.transformAllOptions",
+          "command": "m2k.addHelmChart",
           "group": "move2kube@4"
+        },
+        {
+          "when": "explorerResourceIsFolder",
+          "command": "m2k.transformAllOptions",
+          "group": "move2kube@5"
         }
       ]
     }
